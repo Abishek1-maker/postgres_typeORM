@@ -4,7 +4,9 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 //This explicitly names your table "properties"
 export class Property {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
+  @Column()
+  name: string;
 
   @Column()
   description: string;
