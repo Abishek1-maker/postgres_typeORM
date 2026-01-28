@@ -16,8 +16,10 @@ import { UpdatePropertyDto } from './dto/updateProperty.dto';
 export class PropertyController {
   constructor(private propertyService: PropertyService) {}
 
+  //In GET ONLY MIDDLEWARE CHECK
   @Get()
   findAll() {
+    console.log('just checking is middleware working!!');
     return this.propertyService.findall();
   }
 
