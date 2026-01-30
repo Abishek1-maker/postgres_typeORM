@@ -7,19 +7,19 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { propertydto } from './dto/property.dto';
 import { PropertyService } from './property.service';
 import { UpdatePropertyDto } from './dto/updateProperty.dto';
+import { AuthGuard } from 'src/guards/auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('property')
 export class PropertyController {
   constructor(private propertyService: PropertyService) {}
-
-  //In GET ONLY MIDDLEWARE CHECK
   @Get()
   findAll() {
-    console.log('just checking is middleware working!!');
     return this.propertyService.findall();
   }
 
