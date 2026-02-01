@@ -16,13 +16,14 @@ import { UpdatePropertyDto } from './dto/updateProperty.dto';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
 import { LoggerInterceptor } from 'src/interceptors/logger/logger.interceptor';
 import { TranformInterceptor } from 'src/interceptors/tranform/tranform.interceptor';
+import { CacheInterceptor } from 'src/interceptors/cache/cache.interceptor';
 
 @UseGuards(AuthGuard)
 @Controller('property')
 export class PropertyController {
   constructor(private propertyService: PropertyService) {}
   @Get()
-  @UseInterceptors(TranformInterceptor)
+  @UseInterceptors(TranformInterceptor, CacheInterceptor)
   findAll() {
     return this.propertyService.findall();
   }
