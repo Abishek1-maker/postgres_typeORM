@@ -17,8 +17,18 @@ export class UserService {
   async findOne(id: number) {
     return await this.userRepo.findOne({ where: { id } });
   }
+
+  //this is for Authentication with local strategy
+  async findByEmail(email: string) {
+    return await this.userRepo.findOne({
+      where: {
+        email,
+      },
+    });
+  }
+
   async create(data: UserDto) {
-    const user = this.userRepo.create(data); //due to this password will hash either it will show real pass
+    const user = this.userRepo.create(data);
     return await this.userRepo.save(user);
   }
   async update(id: number, data: UpdateUserDto) {
