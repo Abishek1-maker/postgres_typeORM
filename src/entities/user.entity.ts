@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
+  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
@@ -10,6 +11,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Property } from './property.entity';
+import * as bcrypt from 'bcrypt';
 
 @Entity()
 export class User {
@@ -22,6 +24,9 @@ export class User {
   lastName: string;
   @Column()
   email: string;
+
+  @Column({ nullable: true })
+  password: string;
   @Column()
   avatarUrl: string;
 
@@ -34,4 +39,9 @@ export class User {
   @ManyToMany(() => Property, (Property) => Property.likedBy)
   @JoinTable({ name: 'user_liked_properties' })
   likesProperties: Property[];
+
+  @BeforeInsert()
+  async hashpassword() {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
 }

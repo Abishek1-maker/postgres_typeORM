@@ -18,7 +18,8 @@ export class UserService {
     return await this.userRepo.findOne({ where: { id } });
   }
   async create(data: UserDto) {
-    return await this.userRepo.save(data);
+    const user = this.userRepo.create(data); //due to this password will hash either it will show real pass
+    return await this.userRepo.save(user);
   }
   async update(id: number, data: UpdateUserDto) {
     return await this.userRepo.update(id, data);
