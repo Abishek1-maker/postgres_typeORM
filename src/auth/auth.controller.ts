@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/await-thenable */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
@@ -17,12 +20,11 @@ export class AuthController {
 
   // @HttpCode(200)
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard('local')) //AuthGuard came from passport
-  // and local is name of strategy , you can use custom guard also
+  @UseGuards(AuthGuard('local'))
   @Post('login')
-  async login(@Request() req: any) {
+  login(@Request() req: any) {
     console.log(req.hehe, req.user);
-    return await req.user; //but passport Always uses lowercase 'user as the property name  req.user
-    // we can know from the local startegy return'
+    const token = this.authService.login(req.user.id); //token also requested
+    return { id: req.user.id, token };
   }
 }
