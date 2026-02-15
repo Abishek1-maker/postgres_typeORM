@@ -14,8 +14,13 @@ export class UserService {
   async findall() {
     return await this.userRepo.find();
   }
+
+  //JWT
   async findOne(id: number) {
-    return await this.userRepo.findOne({ where: { id } });
+    return await this.userRepo.findOne({
+      where: { id },
+      select: ['firstName', 'lastName', 'avatarUrl', 'createdAt'],
+    });
   }
 
   //this is for Authentication with local strategy
