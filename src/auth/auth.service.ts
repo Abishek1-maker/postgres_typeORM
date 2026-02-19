@@ -1,8 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
 import { UserService } from 'src/user/user.service';
 import { AuthJwtPayload } from './types/auth-jwtPayload';
+import refreshJwtConfig from './config/refresh-jwt.config';
+import type { ConfigType } from '@nestjs/config';
 
 //This is for validate user
 @Injectable()
@@ -10,6 +13,11 @@ export class AuthService {
   constructor(
     private readonly userService: UserService,
     private JwtService: JwtService,
+    @Inject(refreshJwtConfig.KEY)
+    //for this we have done configfeatures in module
+    private readonly refresh_tokenConfiguration: ConfigType<
+      typeof refreshJwtConfig
+    >,
   ) {}
 
   async validateUser(email: string, password: string) {
@@ -29,6 +37,26 @@ export class AuthService {
   login(userId: number) {
     const payload: AuthJwtPayload = { sub: userId };
 
-    return this.JwtService.sign(payload);
+    const token = this.JwtService.sign(payload);
+    const Refresh_token = this.JwtService.sign(
+      payload,
+      this.refresh_tokenConfiguration,
+    );
+
+    return {
+      id: userId,
+      token,
+      Refresh_token,
+    };
+  }
+
+  refreshToken(UserId: number) {
+    const refresh_Payload: AuthJwtPayload = { sub: UserId };
+
+    const refresh_token = this.JwtService.sign(refresh_Payload);
+    return {
+      id: UserId,
+      refresh_token,
+    };
   }
 }

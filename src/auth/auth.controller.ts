@@ -8,11 +8,13 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Req,
   Request,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
+import { RefreshAuthGuard } from './guards/refresh-auth/refresh-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -26,5 +28,11 @@ export class AuthController {
     console.log(req.hehe, req.user);
     const token = this.authService.login(req.user.id); //token also requested
     return { id: req.user.id, token };
+  }
+
+  @UseGuards(RefreshAuthGuard)
+  @Post('refresh')
+  refreshtoken(@Req() req: any) {
+    return this.authService.refreshToken(req.user.id);
   }
 }
