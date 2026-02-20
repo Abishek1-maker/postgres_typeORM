@@ -12,6 +12,8 @@ import {
 } from 'typeorm';
 import { Property } from './property.entity';
 import * as bcrypt from 'bcrypt';
+import { IsOptional } from 'class-validator';
+import { Role } from 'src/auth/enums/role.enum';
 
 @Entity()
 export class User {
@@ -27,7 +29,17 @@ export class User {
 
   @Column({ nullable: true })
   password: string;
-  @Column()
+
+  //ROLE ADDED
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.USER,
+  })
+  role: Role;
+
+  @Column({ nullable: true })
+  @IsOptional()
   avatarUrl: string;
 
   @CreateDateColumn()
@@ -42,6 +54,8 @@ export class User {
 
   @BeforeInsert()
   async hashpassword() {
-    this.password = await bcrypt.hash(this.password, 10);
+    if (this.password) {
+      this.password = await bcrypt.hash(this.password, 10);
+    }
   }
 }

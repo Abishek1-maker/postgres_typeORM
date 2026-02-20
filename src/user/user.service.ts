@@ -15,15 +15,14 @@ export class UserService {
     return await this.userRepo.find();
   }
 
-  //JWT
+  //From where we get in return ROLE BASED
   async findOne(id: number) {
     return await this.userRepo.findOne({
       where: { id },
-      select: ['firstName', 'lastName', 'avatarUrl', 'createdAt'],
+      select: ['id', 'firstName', 'lastName', 'avatarUrl', 'createdAt', 'role'],
     });
   }
 
-  //this is for Authentication with local strategy
   async findByEmail(email: string) {
     return await this.userRepo.findOne({
       where: {

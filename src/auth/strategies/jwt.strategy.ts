@@ -1,39 +1,34 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { ConfigType } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import jwtConfig from '../config/jwt.config';
 import { AuthJwtPayload } from '../types/auth-jwtPayload';
 import { Inject, Injectable } from '@nestjs/common';
+import { AuthService } from '../auth.service';
 
 @Injectable()
 export class JWTStrategy extends PassportStrategy(Strategy) {
-  // JWTStrategy is a child class
-  //  PassportStrategy(Strategy) is the parent class in here
-  //Check if the JWT IS VALID it is for protect our API with jwt
   constructor(
     @Inject(jwtConfig.KEY)
     private jwtConfiguration: ConfigType<typeof jwtConfig>,
+    private Authservice: AuthService,
   ) {
-    // to send configuration to the parent class super is used.
-
     if (!jwtConfiguration.secret) {
       throw new Error('JWT secret is not defined in configuration!');
     }
     super({
-      //     This tells Passport:
-      // Where to get JWT → from Bearer token
-      // What secret to use → your JWT secret
-      // So super() is sending settings to Passport.
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-
-      //gConfigModule.forFeature(jwt1Config),
 
       secretOrKey: jwtConfiguration.secret as string,
       ignoreExpiration: false,
-      //means "do not accept expired JWT
     });
   }
+
+  //Roles BASED=> (ValidateJWTUser) came from auth services this function for adding role property into the user
+  // object we going to append to req object from this validate function in jwt strategies
   validate(payload: AuthJwtPayload) {
-    return { id: payload.sub };
+    const userId = payload.sub;
+    return this.Authservice.ValidateJWTUser(userId);
   }
 }

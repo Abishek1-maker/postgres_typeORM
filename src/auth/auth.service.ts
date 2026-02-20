@@ -6,6 +6,7 @@ import { UserService } from 'src/user/user.service';
 import { AuthJwtPayload } from './types/auth-jwtPayload';
 import refreshJwtConfig from './config/refresh-jwt.config';
 import type { ConfigType } from '@nestjs/config';
+import { CurrentUser } from './types/current-user';
 
 //This is for validate user
 @Injectable()
@@ -14,7 +15,6 @@ export class AuthService {
     private readonly userService: UserService,
     private JwtService: JwtService,
     @Inject(refreshJwtConfig.KEY)
-    //for this we have done configfeatures in module
     private readonly refresh_tokenConfiguration: ConfigType<
       typeof refreshJwtConfig
     >,
@@ -58,5 +58,14 @@ export class AuthService {
       id: UserId,
       refresh_token,
     };
+  }
+
+  //Role based here
+  async ValidateJWTUser(UserId: number) {
+    const user = await this.userService.findOne(UserId);
+    console.log(user);
+    if (!user) throw new UnauthorizedException('User not found!');
+    const currentUser: CurrentUser = { id: user.id, role: user.role };
+    return currentUser;
   }
 }
