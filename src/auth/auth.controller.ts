@@ -15,6 +15,7 @@ import {
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RefreshAuthGuard } from './guards/refresh-auth/refresh-auth.guard';
+import { JwtAuthGuard } from './guards/jwt-auth/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -26,13 +27,23 @@ export class AuthController {
   @Post('login')
   login(@Request() req: any) {
     console.log(req.hehe, req.user);
-    const token = this.authService.login(req.user.id); //token also requested
-    return { id: req.user.id, token };
+    return this.authService.login(req.user.id); //token also requested
   }
 
   @UseGuards(RefreshAuthGuard)
   @Post('refresh')
   refreshtoken(@Req() req: any) {
     return this.authService.refreshToken(req.user.id);
+  }
+
+  //Route for sign out post endpoint
+  @Post('signout') //we cannot acces id withour this
+  @UseGuards(JwtAuthGuard) //user must have valid access token then decode then extract
+  async signOut(@Req() req) {
+    //under user property we request so we acces user id
+    await this.authService.signOut(req.user.id);
+    return {
+      message: 'Log out successfully',
+    };
   }
 }

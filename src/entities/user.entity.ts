@@ -30,7 +30,10 @@ export class User {
   @Column({ nullable: true })
   password: string;
 
-  //ROLE ADDED
+  //creating hashed user refresh token before saved in database we are keeping it short because
+  @Column({ nullable: true })
+  hashedrefreshToken: string;
+
   @Column({
     type: 'enum',
     enum: Role,

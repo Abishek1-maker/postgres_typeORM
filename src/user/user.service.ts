@@ -11,15 +11,28 @@ import { Repository } from 'typeorm';
 export class UserService {
   constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
 
+  //THIS IS FOR STORED HASHED refreshToken
+  async updateHashedRefreshToken(userId: number, hashedrefreshToken: string) {
+    return await this.userRepo.update({ id: userId }, { hashedrefreshToken });
+  }
+
   async findall() {
     return await this.userRepo.find();
   }
 
-  //From where we get in return ROLE BASED
+  //passed the hashed refresh token because we need inside our validate function()
   async findOne(id: number) {
     return await this.userRepo.findOne({
       where: { id },
-      select: ['id', 'firstName', 'lastName', 'avatarUrl', 'createdAt', 'role'],
+      select: [
+        'id',
+        'firstName',
+        'lastName',
+        'avatarUrl',
+        'createdAt',
+        'role',
+        'hashedrefreshToken',
+      ],
     });
   }
 
